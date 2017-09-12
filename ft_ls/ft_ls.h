@@ -7,14 +7,15 @@
 
 typedef struct		s_arg
 {
-    int				l;
-    int				upper_r;
-    int				a;
-    int				r;
-    int				t;
-    int				u;
-    int				f;
-    int				g;
-}					t_arg;
+	int		l;
+	int		upper_r;
+	int		d;
+	int		a;
+	int		r;
+	int		t;
+	int		u;
+	int		f;
+	int		g;
+}			t_arg;
 
 #endif
