@@ -1,21 +1,43 @@
 
-#ifndef FT_LS_FT_LS_H
-#define FT_LS_FT_LS_H
+#ifndef FT_LS_H
+# define FT_LS_H
 
-#include "libft/libft.h"
-#include <dirent.h>
+# include "libft/libft.h"
+# include <dirent.h>
+# include <sys/stat.h>
+# include <pwd.h>
+# include <grp.h>
+# include <time.h>
 
 typedef struct		s_arg
 {
-	int		l;
-	int		upper_r;
-	int		d;
-	int		a;
-	int		r;
-	int		t;
-	int		u;
-	int		f;
-	int		g;
-}			t_arg;
+	int				l;
+	int				upper_r;
+	int				a;
+    int				r;
+    int				t;
+    int				u;
+    int				f;
+    int				g;
+}					t_arg;
 
+typedef struct		s_file
+{
+	char			*access;
+	nlink_t			st_nlink;
+	char 			*pw_name;
+	char			*gr_name;
+	off_t			st_size;
+	time_t			st_time;
+	char			*name;
+	struct s_file	*next;
+	struct s_file	*previous;
+}					t_file;
+
+t_file				*read_dir(DIR *ptr, t_arg *arg);
+void				ft_ls(t_arg *arg);
+t_file				*sort_tim(t_file *file);
+t_file				*sort_alpha(t_file *file);
+void				previous_communication(t_file **file);
+void				last_file(t_file **file);
 #endif
