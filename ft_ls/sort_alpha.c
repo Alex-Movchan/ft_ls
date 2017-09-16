@@ -15,7 +15,7 @@ static int		first_arg(t_file **file)
 {
 	t_file	*lst;
 
-	if (ft_strcmp_tplower((*file)->name, (*file)->next->name) > 0)
+	if ((*file)->next && ft_strcmp_tplower((*file)->name, (*file)->next->name) > 0)
 	{
 		lst = (*file)->next;
 		(*file)->next = (*file)->next->next;
@@ -33,7 +33,7 @@ t_file	*sort_alpha(t_file *file)
 	t_file	*tmp2;
 
 	lst = file;
-	while (lst->next->next)
+	while (lst->next && lst->next->next)
 	{
 		if (ft_strcmp_tplower(lst->next->name, lst->next->next->name) > 0)
 		{

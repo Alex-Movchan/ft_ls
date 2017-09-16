@@ -5,7 +5,7 @@ static int		first_arg_time(t_file **file)
 {
 	t_file	*lst;
 
-	if ((*file)->st_time < (*file)->next->st_time)
+	if ((*file)->next && (*file)->st_time < (*file)->next->st_time)
 	{
 		lst = (*file)->next;
 		(*file)->next = (*file)->next->next;
@@ -23,7 +23,7 @@ t_file	*sort_tim(t_file *file)
 	t_file	*tmp2;
 
 	lst = file;
-	while (lst->next->next)
+	while (lst->next && lst->next->next)
 	{
 		if (lst->next->st_time < lst->next->next->st_time)
 		{

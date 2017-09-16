@@ -19,6 +19,7 @@ typedef struct		s_arg
     int				u;
     int				f;
     int				g;
+	int				one;
 }					t_arg;
 
 typedef struct		s_file
@@ -30,12 +31,13 @@ typedef struct		s_file
 	off_t			st_size;
 	time_t			st_time;
 	char			*name;
+	blkcnt_t		blok;
 	struct s_file	*next;
 	struct s_file	*previous;
 }					t_file;
 
-t_file				*read_dir(DIR *ptr, t_arg *arg);
-void				ft_ls(t_arg *arg);
+t_file				*read_dir(DIR *ptr, t_arg *arg, char *name);
+void				ft_ls(t_arg *arg, char *name);
 t_file				*sort_tim(t_file *file);
 t_file				*sort_alpha(t_file *file);
 void				previous_communication(t_file **file);

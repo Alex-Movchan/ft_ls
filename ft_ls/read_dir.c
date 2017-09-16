@@ -40,7 +40,9 @@ void	file_data(struct stat buf, struct dirent *dir, t_file **file, t_arg *arg)
 	lst->pw_name = getpwuid(buf.st_uid)->pw_name;
 	lst->gr_name = getgrgid(buf.st_gid)->gr_name;
 	lst->st_size = buf.st_size;
-	lst->st_time = arg->u == 0 ? buf.st_mtim.tv_sec : buf.st_atim.tv_sec;
+	//lst->st_time = arg->u == 0 ? buf.st_mtim.tv_sec : buf.st_atim.tv_sec; Linux
+	lst->st_time = arg->u == 0 ? buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
+	lst->blok = buf.st_blocks;
 }
 
 t_file	*search_last_file(struct stat buf, struct dirent *dir, t_file *file, t_arg *arg)
@@ -65,16 +67,36 @@ t_file	*search_last_file(struct stat buf, struct dirent *dir, t_file *file, t_ar
 	return (file);
 }
 
-t_file	*read_dir(DIR *ptr, t_arg *arg)
+char	*name_in_dr(char *name, char *file)
+{
+	char	*tab;
+	char	*s;
+
+	if (name[0] == '.' && name[1] == '\0')
+		return (ft_strdup(file));
+	if (name[ft_strlen(name) - 1] != '/')
+		tab = ft_strjoin(name, "/");
+	else
+		tab = ft_strdup(name);
+	s = ft_strjoin(tab, file);
+	ft_strdel(&tab);
+	return (s);
+}
+
+t_file	*read_dir(DIR *ptr, t_arg *arg, char *name)
 {
 	t_file			*file;
 	struct dirent	*dir;
 	struct stat		buf;
+	char			*src;
 
 	file = NULL;
-	while ((dir = readdir(ptr))&& stat(dir->d_name, &buf) == 0)
+	while ((dir = readdir(ptr)) != NULL)
 	{
-		file = search_last_file(buf, dir, file, arg);
+		src = name_in_dr(name, dir->d_name);
+		if (lstat(src, &buf) == 0)
+			file = search_last_file(buf, dir, file, arg);
+		ft_strdel(&src);
 	}
 	return (file);
 }
