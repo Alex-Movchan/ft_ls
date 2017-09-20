@@ -47,11 +47,15 @@ int           main(int ac, char **av)
     char	*name;
 
 	if (ac > 1 && av[ac -1][0] != '-')
-		name = av[ac - 1];
+		name = ft_strdup(av[ac - 1]);
 	else
-		name = ".";
+		name = ft_strdup(".");
+	if (name[0] == '~')
+		name = ft_strjoin(strndup(av[0], 10), av[ac - 1] + 1);
 	arg = pars_arg(ac, av);
 	ft_ls(arg, name);
+	ft_strdel(&name);
+	free(arg);
 	return (0);
 }
 

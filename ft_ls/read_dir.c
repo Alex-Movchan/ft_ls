@@ -40,8 +40,8 @@ void	file_data(struct stat buf, struct dirent *dir, t_file **file, t_arg *arg)
 	lst->pw_name = getpwuid(buf.st_uid)->pw_name;
 	lst->gr_name = getgrgid(buf.st_gid)->gr_name;
 	lst->st_size = buf.st_size;
-	//lst->st_time = arg->u == 0 ? buf.st_mtim.tv_sec : buf.st_atim.tv_sec; Linux
-	lst->st_time = arg->u == 0 ? buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
+	lst->st_time = arg->u == 0 ? buf.st_mtim.tv_sec : buf.st_atim.tv_sec; //Linux
+//	lst->st_time = arg->u == 0 ? buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
 	lst->blok = buf.st_blocks;
 }
 

@@ -26,7 +26,7 @@ static int		first_arg(t_file **file)
 	return (1);
 }
 
-t_file	*sort_alpha(t_file *file)
+t_file			*sort_alpha(t_file *file)
 {
 	t_file	*lst;
 	t_file	*tmp;

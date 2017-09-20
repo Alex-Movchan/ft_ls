@@ -16,7 +16,7 @@ static int		first_arg_time(t_file **file)
 	return (1);
 }
 
-t_file	*sort_tim(t_file *file)
+t_file			*sort_tim(t_file *file)
 {
 	t_file	*lst;
 	t_file	*tmp;

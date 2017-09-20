@@ -42,4 +42,6 @@ t_file				*sort_tim(t_file *file);
 t_file				*sort_alpha(t_file *file);
 void				previous_communication(t_file **file);
 void				last_file(t_file **file);
+void				ft_recursoin(t_file *file, t_arg *arg, char *name);
+
 #endif
