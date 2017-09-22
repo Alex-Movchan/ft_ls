@@ -1,76 +1,10 @@
 
 #include "ft_ls.h"
 
-int		ft_total(t_file *file, t_arg *arg)
-{
-	int		res;
 
-	res = 0;
-	while (file)
-	{
-		if (arg->a == 0 && file->name[0] == '.')
-		{
-			file = file->next;
-			continue ;
-		}
-		res += file->blok;
-		file = file->next;
-	}
-	return (res / 2);//linux
-}
 
-static void	print_file(t_file *file, t_arg *arg)
-{
-	char	*time;
 
-	if (arg->l)
-		ft_printf("total %d\n", ft_total(file, arg));
-		while (file)
-		{
-			if (arg->a == 0 && file->name[0] == '.')
-			{
-				file = file->next;
-				continue;
-			}
-			if (arg->l)
-			{
-				time = ft_strndup((ctime(&file->st_time) + 4), 12);
-				if (file->access[0] == 'd')
-				ft_printf("%s %d %s %s % 6d %s %{bleu}s{eoc}\n", file->access, file->st_nlink, file->pw_name, file->gr_name,
-						  file->st_size, time, file->name);
-				else
-					ft_printf("%s %d %s %s % 6d %s %s\n", file->access, file->st_nlink, file->pw_name, file->gr_name,
-							  file->st_size, time, file->name);
-				ft_strdel(&time);
-			}
-			else if (arg->one)
-				ft_printf("%s\n", file->name);
-			file = file->next;
-		}
-}
-static void	print_revers(t_file *file, t_arg *arg)
-{
-	if (arg->l)
-		ft_printf("total %d\n", ft_total(file, arg));
-	previous_communication(&file);
-	last_file(&file);
-	while (file->previous)
-	{
-		if (arg->a == 0 && file->name[0] == '.')
-		{
-			file = file->previous;
-			continue;
-		}
-		if (arg->l)
-			ft_printf("%s %d %s %s % 6d %d %s\n", file->access, file->st_nlink, file->pw_name, file->gr_name,
-					  file->st_size, file->st_time, file->name);
-		else if (arg->one)
-			ft_printf("%s\n", file->name);
-		file = file->previous;
-	}
-}
-
-void		ft_dell_file(t_file **file)
+static void	ft_dell_file(t_file **file)
 {
 	t_file	*leaks;
 	t_file	*lst;
@@ -80,9 +14,33 @@ void		ft_dell_file(t_file **file)
 	{
 		leaks = lst;
 		lst = lst->next;
-		lst->previous = NULL;
+		if (lst && lst->next)
+			lst->previous = NULL;
 		ft_strdel(&(leaks->access));
 		ft_strdel((&(leaks->name)));
+		free(leaks);
+	}
+}
+
+static void	ft_recursoin(t_file *file, t_arg *arg, char *name)
+{
+	t_file	*lst;
+	char	*src;
+
+	lst = file;
+	while (lst)
+	{
+		if (lst->access[0] == 'd' && ft_strcmp(".", lst->name) &&
+				ft_strcmp("..", lst->name) && !(arg->a == 0 && lst->name[0] == '.'))
+		{
+			if (name[ft_strlen(name) -1] != '/')
+				src = ft_strjoin(ft_strjoin(name, "/"), lst->name);
+			else
+				src = ft_strjoin(name, lst->name);
+			ft_ls(arg, src);
+			ft_strdel(&src);
+		}
+		lst = lst->next;
 	}
 }
 
@@ -103,11 +61,12 @@ void    	ft_ls(t_arg *arg, char *name)
 		return ;
 	}
 	closedir(ptr);
-	file = sort_alpha(file);
 	if (arg->upper_r)
 		ft_printf("%s:\n", name);
 	if (arg->t || arg->u)
 		file = sort_tim(file);
+	else
+		file = sort_alpha(file);
 	if (arg->r)
 		print_revers(file, arg);
 	else
@@ -116,25 +75,4 @@ void    	ft_ls(t_arg *arg, char *name)
 		ft_recursoin(file, arg, name);
 	ft_dell_file(&file);
 
-}
-
-void	ft_recursoin(t_file *file, t_arg *arg, char *name)
-{
-	t_file	*lst;
-	char	*src;
-
-	lst = file;
-	while (lst)
-	{
-		if (lst->access[0] == 'd' && ft_strcmp(".", lst->name) && ft_strcmp("..", lst->name) && !(arg->a == 0 && lst->name[0] == '.'))
-		{
-			if (name[ft_strlen(name) -1] != '/')
-				src = ft_strjoin(ft_strjoin(name, "/"), lst->name);
-			else
-				src = ft_strjoin(name, lst->name);
-			ft_ls(arg, src);
-			ft_strdel(&src);
-		}
-		lst = lst->next;
-	}
 }
