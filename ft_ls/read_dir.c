@@ -1,6 +1,6 @@
 
-#include <time.h>
 #include "ft_ls.h"
+
 
 char    *ft_access(struct stat buf)
 {
@@ -8,7 +8,7 @@ char    *ft_access(struct stat buf)
 	int     i;
 
 	i = 0;
-	mod = (char*)malloc(sizeof(char) * 11);
+	mod = (char*)malloc(sizeof(char) * 12);
 	mod[i] = S_ISFIFO(buf.st_mode) ? 'p' : mod[i];
 	mod[i] = S_ISCHR(buf.st_mode) ? 'c' : mod[i];
 	mod[i] = S_ISDIR(buf.st_mode) ? 'd' :mod[i];
@@ -25,6 +25,7 @@ char    *ft_access(struct stat buf)
 	mod[++i] = (buf.st_mode & S_IROTH) ? 'r' : '-';
 	mod[++i] = (buf.st_mode & S_IWOTH) ? 'w' : '-';
 	mod[++i] = (buf.st_mode & S_IXOTH) ? 'x' : '-';
+	mod[++i] = ' ';
 	mod[++i] = '\0';
 	return (mod);
 }
@@ -37,12 +38,12 @@ void	file_data(struct stat buf, struct dirent *dir, t_file **file, t_arg *arg)
 	lst->name = ft_strdup(dir->d_name);
 	lst->st_nlink = buf.st_nlink;
 	lst->access = ft_access(buf);
-	lst->pw_name = getpwuid(buf.st_uid)->pw_name;
-	lst->gr_name = getgrgid(buf.st_gid)->gr_name;
+	lst->pw_name = ft_strdup(getpwuid(buf.st_uid)->pw_name);
+	lst->gr_name = ft_strdup(getgrgid(buf.st_gid)->gr_name);
 	lst->st_size = buf.st_size;
-	lst->st_time = arg->u == 0 ? buf.st_mtim.tv_sec : buf.st_atim.tv_sec;//Linux
-	lst->st_nano = arg->u == 0 ? buf.st_mtim.tv_nsec : buf.st_atim.tv_nsec;
-//	lst->st_time = arg->u == 0 ? buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
+//	lst->st_time = arg->u == 0 ? buf.st_mtim.tv_sec : buf.st_atim.tv_sec;//Linux
+//	lst->st_nano = arg->u == 0 ? buf.st_mtim.tv_nsec : buf.st_atim.tv_nsec;
+	lst->st_time = arg->u == 0 ? buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
 	lst->blok = buf.st_blocks;
 }
 
@@ -84,6 +85,22 @@ char	*name_in_dr(char *name, char *file)
 	return (s);
 }
 
+void	ft_get_atribut(char *path, char **src)
+{
+	acl_t		acl;
+	acl_entry_t	entry_p;
+
+
+	acl = acl_get_link_np(path, ACL_TYPE_EXTENDED);
+	if (acl && acl_get_entry(acl, ACL_FIRST_ENTRY, &entry_p) == -1)
+		acl_free(&acl);
+	if (acl)
+		(*src)[10] = '+';
+	if (listxattr(path, NULL, 1, XATTR_NOFOLLOW) > 0)
+		(*src)[10] = '@';
+}
+
+
 t_file	*read_dir(DIR *ptr, t_arg *arg, char *name)
 {
 	t_file			*file;
@@ -96,7 +113,10 @@ t_file	*read_dir(DIR *ptr, t_arg *arg, char *name)
 	{
 		src = name_in_dr(name, dir->d_name);
 		if (lstat(src, &buf) == 0)
+		{
 			file = search_last_file(buf, dir, file, arg);
+			ft_get_atribut(src, &(file->access));
+		}
 		ft_strdel(&src);
 	}
 	return (file);

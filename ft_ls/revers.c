@@ -24,19 +24,23 @@ int		*largestelem(t_file *file)
 {
 	int		*max;
 	t_file	*lst;
-	int		len1;
-	int 	len2;
 
 	lst = file;
-	max = (int*)malloc(sizeof(int) * 2);
+	max = (int*)malloc(sizeof(int) * 4);
 	max[0] = 0;
 	max[1] = 0;
+	max[2] = 0;
+	max[3] = 0;
 	while (lst)
 	{
-		if (max[0] < (len1 = ft_len_int((int)lst->st_nlink)))
-			max[0] = len1;
-		if (max[1] < (len2 = ft_len_int((int)lst->st_size)))
-			max[1] = len2;
+		if (max[0] < ft_len_int((int)lst->st_nlink))
+			max[0] = ft_len_int((int)lst->st_nlink);
+		if (max[1] < ft_len_int((int)lst->st_size))
+			max[1] = ft_len_int((int)lst->st_size);
+		if (max[2] < ft_strlen(lst->pw_name))
+			max[2] = (int)ft_strlen(lst->pw_name);
+		if (max[3] < ft_strlen(lst->gr_name))
+			max[3] = (int)ft_strlen(lst->gr_name);
 		lst = lst->next;
 	}
 	max[0]++;
@@ -59,5 +63,5 @@ int		ft_total(t_file *file, t_arg *arg)
 		res += file->blok;
 		file = file->next;
 	}
-	return (res / 2);//linux
+	return (res);//linux
 }

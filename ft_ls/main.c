@@ -87,8 +87,6 @@ int           main(int ac, char **av)
 		name = ft_strdup(av[ac - 1]);
 	else
 		name = ft_strdup(".");
-	if (name[0] == '~')
-		name = ft_strjoin(strndup(av[0], 10), av[ac - 1] + 1);
 	ft_ls(arg, name);
 	ft_strdel(&name);
 	free(arg);

@@ -10,6 +10,8 @@
 # include <time.h>
 # include <sys/ioctl.h>
 # include <fcntl.h>
+# include <sys/xattr.h>
+# include <sys/acl.h>
 
 typedef struct		s_arg
 {
@@ -51,6 +53,6 @@ int					ft_total(t_file *file, t_arg *arg);
 void				print_revers(t_file *file, t_arg *arg);
 void				print_file(t_file *file, t_arg *arg);
 int					*largestelem(t_file *file);
-void		print_colum(t_file *file, t_arg *arg);
+void				print_colum(t_file *file, t_arg *arg);
 
 #endif

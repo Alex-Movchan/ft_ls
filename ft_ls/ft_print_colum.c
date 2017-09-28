@@ -50,10 +50,10 @@ void		print_colum(t_file *file, t_arg *arg)
 	int		len;
 	int		size;
 	int		line;
+	int		i;
 
 	size = size_colum();
 	len = largest_name_len(file);
-	//size -= 10;
 	line = size / len;
 	while (file)
 	{

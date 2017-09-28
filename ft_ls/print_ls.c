@@ -48,13 +48,13 @@ static void	print_ls(t_file *file, t_arg *arg, int *max)
 		time = ft_strndup((ctime(&file->st_time) + 4), 12);
 		time[12] = '\0';
 		if (file->access[0] == 'd')
-			ft_printf("%s% *d %s %s% *d %s %{green}s{eoc}\n", file->access, max[0], file->st_nlink, file->pw_name, file->gr_name,
+			ft_printf("%s% *d %-*s %-*s% *d %s %{green}s{eoc}\n", file->access, max[0], file->st_nlink, max[2], file->pw_name, max[3], file->gr_name,
 					max[1], file->st_size, time, file->name);
 		else if (file->access[0] == 'l')
-			ft_printf("%s% *d %s %s% *d %s %{bleu}s{eoc}\n", file->access, max[0], file->st_nlink, file->pw_name, file->gr_name,
+			ft_printf("%s% *d %-*s %-*s% *d %s %{bleu}s{eoc}\n", file->access, max[0], file->st_nlink, max[2], file->pw_name, max[3], file->gr_name,
 					  max[1], file->st_size, time, file->name);
 		else
-			ft_printf("%s% *d %s %s% *d %s %s\n", file->access, max[0], file->st_nlink, file->pw_name, file->gr_name,
+			ft_printf("%s% *d %-*s %-*s% *d %s %s\n", file->access, max[0], file->st_nlink, max[2], file->pw_name, max[3], file->gr_name,
 					 max[1], file->st_size, time, file->name);
 		ft_strdel(&time);
 	}
@@ -66,7 +66,6 @@ static void	print_ls(t_file *file, t_arg *arg, int *max)
 
 void		print_file(t_file *file, t_arg *arg)
 {
-	char	*time;
 	int		*max;
 
 	if (arg->l)
@@ -86,6 +85,7 @@ void		print_file(t_file *file, t_arg *arg)
 		print_ls(file, arg, max);
 		file = file->next;
 	}
+	free(max);
 }
 void		print_revers(t_file *file, t_arg *arg)
 {
