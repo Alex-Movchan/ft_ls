@@ -39,20 +39,24 @@ typedef struct		s_file
 	time_t			st_nano;
 	char			*name;
 	blkcnt_t		blok;
+	char			*atribut;
 	struct s_file	*next;
 	struct s_file	*previous;
 }					t_file;
 
-t_file				*read_dir(DIR *ptr, t_arg *arg, char *name);
+void				read_dir(DIR *ptr, t_arg *arg, char *name, t_file **begin);
 void				ft_ls(t_arg *arg, char *name);
-t_file				*sort_tim(t_file *file);
-t_file				*sort_alpha(t_file *file);
-void				previous_communication(t_file **file);
 void				last_file(t_file **file);
 int					ft_total(t_file *file, t_arg *arg);
 void				print_revers(t_file *file, t_arg *arg);
 void				print_file(t_file *file, t_arg *arg);
 int					*largestelem(t_file *file);
-void				print_colum(t_file *file, t_arg *arg);
+void				print_colum(t_file *file, char *name, int i);
+char  			 	*ft_access(struct stat buf, char *d_name);
+void				add_alpha_file(t_file **begin, t_file *file);
+void				add_time_file(t_file **begin, t_file *file);
+char				*file_name_and_links(char *path, char link, char *name, t_arg *arg);
+
+
 
 #endif

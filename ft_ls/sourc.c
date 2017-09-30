@@ -1,18 +1,4 @@
-
 #include "ft_ls.h"
-
-void	previous_communication(t_file **file)
-{
-	t_file	*lst;
-
-	(*file)->previous = NULL;
-	lst = *file;
-	while (lst->next)
-	{
-		lst->next->previous = lst;
-		lst = lst->next;
-	}
-}
 
 void	last_file(t_file **file)
 {
@@ -63,5 +49,5 @@ int		ft_total(t_file *file, t_arg *arg)
 		res += file->blok;
 		file = file->next;
 	}
-	return (res);//linux
+	return (res);
 }

@@ -6,7 +6,7 @@ static int	size_colum()
 	struct winsize	size;
 
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-	return ((int)size.ws_col);
+	return ((int)size.ws_col );
 }
 
 static int largest_name_len(t_file *file)
@@ -23,11 +23,11 @@ static int largest_name_len(t_file *file)
 			max = len;
 		lst = lst->next;
 	}
-	max += 2;
+	max += 7;
 	return (max);
 }
 
-static int count_file(t_file *file, t_arg *arg)
+static int count_file(t_file *file)
 {
 	int		i;
 	t_file	*lst;
@@ -36,45 +36,57 @@ static int count_file(t_file *file, t_arg *arg)
 	i = 0;
 	while (lst)
 	{
-		if (arg->a == 0 && lst->name[0] == '.')
-			;
-		else
-			i++;
+		i++;
 		lst = lst->next;
 	}
 	return (i);
 }
 
-void		print_colum(t_file *file, t_arg *arg)
+static char	*ft_search_file(t_file *file, int n, int count, int max)
+{
+	t_file	*lst;
+
+	lst = file;
+	 n *= (max - count);
+	while (lst && n)
+	{
+		lst = lst->next;
+		n--;
+	}
+	if (lst)
+		return (lst->name);
+	else
+		return (NULL);
+}
+
+
+void		print_colum(t_file *file, char *name, int i)
 {
 	int		len;
 	int		size;
-	int		line;
-	int		i;
+	int		count;
+	int		n;
+	int		colum;
 
 	size = size_colum();
 	len = largest_name_len(file);
-	line = size / len;
-	while (file)
+	count = count_file(file);
+	n = count % (size / len) > 0 ? 1 : 0;
+	n += count / (size / len);
+	i = n;
+	while (file && i > 0)
 	{
-		if (arg->a == 0 && file->name[0] == '.')
+		colum = size / len;
+		while (colum > 0)
 		{
-			file = file->next;
-			continue ;
+			if ((name = ft_search_file(file, n, colum, (size / len))) != NULL)
+				ft_printf("%-*s", len, name);
+			colum--;
 		}
-		if (file->access[0] == 'd')
-			ft_printf("%{green}-*s{eoc}", len, file->name);
-		else if (file->access[0] == 'l')
-			ft_printf("%{bleu}-*s{eoc}", len, file->name);
-		else
-			ft_printf("%-*s", len, file->name);
-		line--;
-		if (!line)
-		{
+		if (i > 1)
 			ft_printf("\n");
-			line = size / len;
-		}
 		file = file->next;
+		i--;
 	}
 	ft_printf("\n");
 }

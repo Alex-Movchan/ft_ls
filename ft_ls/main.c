@@ -10,7 +10,6 @@ static void    pars_str(t_arg **arg, char *str)
     while (str[++i])
     {
         (*arg)->a = str[i] == 'a' ? 1 : (*arg)->a;
-        (*arg)->f = str[i] == 'f' ? 1 : (*arg)->f;
         (*arg)->g = str[i] == 'g' ? 1 : (*arg)->g;
         (*arg)->l = str[i] == 'l' ? 1 : (*arg)->l;
         (*arg)->r = str[i] == 'r' ? 1 : (*arg)->r;
@@ -19,6 +18,11 @@ static void    pars_str(t_arg **arg, char *str)
 		(*arg)->one = str[i] == '1' ? 1 : (*arg)->one;
         (*arg)->upper_r = str[i] == 'R' ? 1 : (*arg)->upper_r;
 		(*arg)->upper_c = str[i] == 'C' ? 1 : (*arg)->upper_c;
+		if (str[i] == 'f')
+		{
+			(*arg)->a = 1;
+			(*arg)->f = 1;
+		}
     }
 }
 
@@ -57,7 +61,7 @@ int		ft_help()
 	int	fd;
 	char *line;
 
-	if ((fd = open("../ft_ls/help.txt", O_RDONLY)) < 0)
+	if ((fd = open("../help.txt", O_RDONLY)) < 0)
 	{
 		ft_printf("Error opening sours help");
 		return (-1);

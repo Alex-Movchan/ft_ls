@@ -18,6 +18,8 @@ static void	ft_dell_file(t_file **file)
 			lst->previous = NULL;
 		ft_strdel(&(leaks->access));
 		ft_strdel((&(leaks->name)));
+		ft_strdel(&(leaks->gr_name));
+		ft_strdel(&(leaks->pw_name));
 		free(leaks);
 	}
 }
@@ -49,24 +51,20 @@ void    	ft_ls(t_arg *arg, char *name)
 	DIR *ptr;
 	t_file *file;
 
+	file = NULL;
 	if (!(ptr = opendir(name)))
 	{
 		ft_printf("%{fd}s\n", 2, "Error opening");
 		return ;
 	}
-	if (!(file = read_dir(ptr, arg, name)))
-	{
-		ft_printf("%{fd}s\n", 2, "Error reading");
-		closedir(ptr);
-		return ;
-	}
+	read_dir(ptr, arg, name, &file);
 	closedir(ptr);
 	if (arg->upper_r)
 		ft_printf("%s:\n", name);
-	if (arg->t || arg->u)
-		file = sort_tim(file);
-	else
-		file = sort_alpha(file);
+//	if (arg->t || arg->u)
+//		file = sort_tim(file);
+//	else
+//		ft_sort_alpha(&file, 1);
 	if (arg->r)
 		print_revers(file, arg);
 	else

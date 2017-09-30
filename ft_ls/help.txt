@@ -1,111 +1,69 @@
-Використання: ls [КЛЮЧ]... [ФАЙЛ]...
-Виводить дані щодо ФАЙЛів (типово у поточному каталозі).
-Впорядковує у алфавітному порядку, якщо не вказано ні --sort, ні один з
-параметрів -cftuSUX.
+NAME
+     ls -- list directory contents
 
-Обов'язкові аргументи для довгих форм запису параметрів є обов'язковими і для скорочених форм.
-  -a, --all                  не ігнорувати записи, що починаються з .
-  -A, --almost-all           не виводити неявні . і ..
-      --author               разом з -l, виводити автора кожного файла
-  -b, --escape               виводити вісімкові керівні послідовності
-                             замість неграфічних знаків
-      --block-size=РОЗМІР    використовувати блоки розміром РОЗМІР.
+SYNOPSIS
+     ls [-RClaturgf1] [file ...]
 
-                               Наприклад, «--block-size=M» виводить розміри у
-                               одиницях 1.048.576 байтів. Формат РОЗМІРу наведено
-                               нижче.
-  -B, --ignore-backups       не виводити файли, що закінчуються на ~
-  -c                         з -lt: сортувати за часом зміни; з -l:
-                              виводити час зміни та впорядкувати за назвою,
-                              у іншому випадку впорядкувати за часом зміни,
-                              найновіші — перші
-  -C                         виводити список у декілька колонок
-      --color[=КОЛИ]         вказує, чи позначати типи файлів кольором.
-                               КОЛИ може бути «never», «auto» або
-                               «always» (типовий, якщо не вказано)
-  -d, --directory            виводити назви каталогів, а не їх зміст, а
-                               також не слідувати за символічним посиланням
-  -D, --dired                створити виведені дані у режимі Emacs dired
-  -f                         не сортувати, вмикає -aU, вимикає -lst
-  -F, --classify             додавати до назви індикатор (один з */=>@|)
-      --file-type            аналогічно, але не додавати '*'
-      --format=СЛОВО         across -x, commas -m, horizontal -x, long -l,
-                               single-column -1, verbose -l, vertical -C
-      --full-time            виводити повну дату та час
-  -g                         як і -l, але не виводити власника
-      --group-directories-first
-                             показувати каталоги перед файлами.
-                               розширюється за допомогою параметра --sort,
-                               але використання --sort=none (-U) вимикає
-                               групування
-  -G, --no-group             у довгому списку, не виводити назви груп
-  -h, --human-readable       з -l і/або -s виводити розміри у зручному для людини вигляді
-                               (наприклад, 1K 234M 2G)
-  -H, --si                   те саме, але виводити ступені 1000, а не 1024
-  -H, --dereference-command-line
-                             слідувати за символьними посиланнями у командному
-                             рядку
-      --dereference-command-line-symlink-to-dir
-                             слідувати за усіма символьними посиланнями у
-                             командному рядку, які вказують на каталог
-      --hide=ШАБЛОН          не виводити файли, що відповідають ШАБЛОНУ
-                             оболонки (скасовується ключами -a або -A)
-      --indicator-style=СТИЛЬ додавати до назв елементів індикатор з
-                               вказаним СТИЛЕМ: none (типово), slash (-p),
-                               file-type (--file-type), classify (-F)
-  -i, --inode                з -l, виводити номер i-вузла кожного файла
-  -I, --ignore=ШАБЛОН        не виводити файли, що відповідають ШАБЛОНУ
-  -k, --kibibytes            використовувати 1024-байтові блоки
-  -l                         використовувати широкий формат
-  -L, --dereference          показувати інформацію про символьні посилання,
-                               виводити інформацію про файл, на який
-                               посилається посилання
-  -m                         виводити список на всю ширину через кому
-  -n, --numeric-uid-gid      як -l, але виводити числові UID та GID
-  -N, --literal              виводити назви як є (не обробляти особливим
-                               чином, наприклад, керівні знаки)
-  -o                         як -l, але не виводити інформацію про групу
-  -p,  --indicator-style=slash  додавати індикатор / до каталогів
-  -q, --hide-control-chars   виводити ? замість не графічних символів
-      --show-control-chars   виводити недруковані символи (типово
-                              якщо програма не 'ls' та вивід йде не на
-                              термінал).
-  -Q, --quote-name           взяти назву файла у дужки
-      --quoting-style=СЛОВО  використовувати вид оточення дужками СЛОВО:
-                               literal, locale, shell, shell-always,
-                               shell-escape, shell-escape-always, c, escape
-  -r, --reverse              зворотний порядок сортування
-  -R, --recursive            рекурсивно виводити каталоги
-  -s, --size                 виводити розмір кожного файла, у блоках
-  -S                         сортувати за розміром файла, найбільші спочатку
-      --sort=СЛОВО           режим упорядковування (замість «за назвою»):
-                              none (-U), size (-S), time (-t),
-                              version (-v), extension (-X)
-      --time=СЛОВО           з -l, виводити замість часу зміни час,
-                              вказаний СЛОВОМ: atime, access, use (-u), ctime або
-                              status (-c); якщо --sort=time, використовувати
-                              вказаний час як ключ сортування (найновіші спочатку)
-      --time-style=СТИЛЬ     з -l, виводити час використовуючи СТИЛЬ:
-                             full-iso, long-iso, iso, locale, +ФОРМАТ.
-                             ФОРМАТ інтерпретується як у 'date'; якщо
-                             ФОРМАТ - це ФОРМАТ1<переведення-рядка>ФОРМАТ2,
-                             ФОРМАТ1 застосовується до старих файлів, а
-                             ФОРМАТ2 до нових; якщо до СТИЛЮ доданий префікс
-                             'posix-', то він діє лише не у POSIX локалі
-  -t                         впорядковувати за часом зміни, найновіші спочатку
-  -T, --tabsize=ЧИСЛО        крок табуляції дорівнює ЧИСЛУ замість 8
-  -u                         з -lt: сортувати та виводити час доступу
-                              з -l: виводити час доступу та впорядкувати
-                              за назвою
-                              інакше: впорядкувати за часом доступу, найновіші спочатку
-  -U                         не впорядковувати; виводити відповідно до
-                              фізичного розташування
-  -v                         впорядкувати за номерами (версією) у текстовому
-                              форматі
-  -w, --width=ЧИСЛО          задає ширину екрана. 0 — без обмежень
-  -x                         вивід списку рядками, а не стовпчиками
-  -X                         сортувати за розширенням у алфавітному порядку
-  -Z, --context              виводити контекст безпеки для кожного файла
-  -1                         виводити по одному файлу у рядку. Прибрати \n
-                             можна за допомогою -q або -b
-      --help     показати цю довідку та вийти
+DESCRIPTION
+     For each operand that names a file of a type other than directory, ls displays its name as well as any
+     requested, associated information.  For each operand that names a file of type directory, ls displays the names
+     of files contained within that directory, as well as any requested, associated information.
+
+     If no operands are given, the contents of the current directory are displayed.  If more than one operand is
+     given, non-directory operands are displayed first; directory and non-directory operands are sorted separately
+     and in lexicographical order.
+
+     The following options are available:
+    -1      (The numeric digit ``one''.)  Force output to be one entry per line.  This is the default when output
+            is not to a terminal.
+    -a      Include directory entries whose names begin with a dot (.).
+    -C      Force multi-column output; this is the default when output is to a terminal.
+    -g      This option is only available for compatibility with POSIX; it is used to display the group name in the
+            long (-l) format output (the owner name is suppressed).
+    -l      (The lowercase letter ``ell''.)  List in long format.  (See below.)  If the output is to a terminal, a
+            total sum for all the file sizes is output on a line before the long listing.
+    -t      Sort by time modified (most recently modified first) before sorting the operands by lexicographical order.
+    -u      Use time of last access, instead of last modification of the file for sorting (-t) or long printing (-l).
+    -R      Recursively list subdirectories encountered.
+    -r      Reverse the order of the sort to get reverse lexicographical order or the oldest entries first (or
+            largest files last, if combined with sort by size
+    -f      Output is not sorted.  This option turns on the -a option.
+
+
+                     The color designators are as follows:
+
+                           a     black
+                           b     red
+                           c     green
+                           d     brown
+                           e     blue
+                           f     magenta
+                           g     cyan
+                           h     light grey
+                           A     bold black, usually shows up as dark grey
+                           B     bold red
+                           C     bold green
+                           D     bold brown, usually shows up as yellow
+                           E     bold blue
+                           F     bold magenta
+                           G     bold cyan
+                           H     bold light grey; looks like bright white
+                           x     default foreground or background
+
+                     Note that the above are standard ANSI colors.  The actual display may differ depending on the color capabilities of the terminal in use.
+
+                     The order of the attributes are as follows:
+
+                           1.   directory
+                           2.   symbolic link
+                           3.   socket
+                           4.   pipe
+                           5.   executable
+                           6.   block special
+                           7.   character special
+                           8.   executable with setuid bit set
+                           9.   executable with setgid bit set
+                           10.  directory writable to others, with sticky bit
+                           11.  directory writable to others, without sticky bit
+
+                     The default is "exfxcxdxbxegedabagacad", i.e. blue foreground and default background for regular directories, black foreground and red background for setuid executables, etc.

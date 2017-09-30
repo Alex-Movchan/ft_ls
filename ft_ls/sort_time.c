@@ -1,55 +1,98 @@
 
 #include "ft_ls.h"
 
-static int		first_arg_time(t_file **file)
+static void	second_nano(t_file **begin, t_file *file)
 {
-	t_file	*lst;
-
-	if ((*file)->next && (*file)->st_time <= (*file)->next->st_time)
+	if ((*begin)->st_nano < file->st_nano ||
+			((*begin)->st_nano == file->st_nano && ft_strcmp((*begin)->name, file->name) > 0))
 	{
-//		if (((*file)->st_nano == (*file)->next->st_nano &&
-//			 ft_tolower((*file)->name[0]) > ft_tolower((*file)->next->name[0])) ||
-//				((*file)->st_nano > (*file)->next->st_nano && (*file)->st_time == (*file)->next->st_time))
-//			return (1);
-		lst = (*file)->next;
-		(*file)->next = (*file)->next->next;
-		lst->next = (*file);
-		(*file) = lst;
-		return (0);
+			file->next = *begin;
+			(*begin)->previous = file;
+			*begin = (*begin)->previous;
 	}
-	return (1);
+	else
+	{
+		(*begin)->next = file;
+		file->previous = *begin;
+	}
+
 }
 
-t_file			*sort_tim(t_file *file)
+static void	second_file_time(t_file **begin, t_file *file)
+{
+	if ((*begin)->st_time < file->st_time)
+	{
+		file->next = *begin;
+		(*begin)->previous = file;
+		*begin = (*begin)->previous;
+	}
+	else if ((*begin)->st_time == file->st_time)
+		second_nano(begin, file);
+	else
+	{
+		(*begin)->next = file;
+		file->previous = *begin;
+	}
+}
+
+static void	sort_nano(t_file **lst, t_file *file)
+{
+	if ((*lst)->next->st_nano < file->st_nano ||
+			((*lst)->next->st_nano == file->st_nano &&
+			ft_strcmp((*lst)->next->name, file->name) > 0))
+	{
+		file->next = (*lst)->next;
+		(*lst)->next->previous = file;
+		(*lst)->next = file;
+		file->previous = *lst;
+	}
+	else
+	{
+		(*lst) = (*lst)->next;
+		file->next = (*lst)->next;
+		if ((*lst)->next)
+			(*lst)->next->previous = file;
+		(*lst)->next = file;
+		file->previous = *lst;
+	}
+}
+
+static void	ft_find_place_time(t_file **begin, t_file *file)
 {
 	t_file	*lst;
-	t_file	*tmp;
-	t_file	*tmp2;
 
-	lst = file;
-	while (lst->next && lst->next->next)
+	lst = *begin;
+	while (lst->next)
 	{
-		if (lst->next->st_time <= lst->next->next->st_time)
+		if (lst->next->st_time < file->st_time)
 		{
-//			if ((lst->next->st_nano == lst->next->next->st_nano &&
-//					ft_tolower(lst->next->name[0]) > ft_tolower(lst->next->next->name[0])) ||
-//					(lst->next->st_nano > lst->next->next->st_nano && lst->next->st_time == lst->next->next->st_time))
-//			{
-//				lst = lst->next;
-//				continue ;
-//			}
-			tmp = lst->next;
-			tmp2 = lst->next->next->next;
-			lst->next = lst->next->next;
-			lst = lst->next;
-			lst->next = tmp;
-			tmp->next = tmp2;
-			lst = file;
+			file->next = lst->next;
+			lst->next->previous = file;
+			lst->next = file;
+			file->previous = lst;
+			break ;
 		}
-		else
-			lst = lst->next;
+		else if (lst->next->st_time == file->st_time)
+			return(sort_nano(&lst, file));
+		lst = lst->next;
 	}
-	if (!first_arg_time(&file))
-		sort_tim(file);
-	return (file);
+	if (lst->next != file)
+	{
+		lst->next = file;
+		file->previous = lst;
+	}
+}
+
+void		add_time_file(t_file **begin, t_file *file)
+{
+	if (!(*begin)->next)
+		second_file_time(begin, file);
+	else if ((*begin)->st_time < file->st_time || ((*begin)->st_time == file->st_time && (*begin)->next->st_nano < file->st_nano) || ((*begin)->next->st_nano == file->st_nano && ft_strcmp((*begin)->next->name, file->name) > 0))
+	{
+		file->next = *begin;
+		(*begin)->previous = file;
+		*begin = (*begin)->previous;
+	}
+	else
+		ft_find_place_time(begin, file);
 }
