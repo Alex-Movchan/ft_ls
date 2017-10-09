@@ -6,13 +6,13 @@
 /*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/27 17:54:06 by amovchan          #+#    #+#             */
-/*   Updated: 2017/03/17 19:16:54 by amovchan         ###   ########.fr       */
+/*   Updated: 2017/10/01 20:26:41 by amovchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*my_strndup(char *str, int len)
+char	*ft_strndupl(char *str, int len)
 {
 	char	*src;
 
@@ -28,7 +28,7 @@ char	*my_strndup(char *str, int len)
 char	*ft_accur(char *str, t_srt *lst)
 {
 	if (lst->accur != -1)
-		return (my_strndup(str, lst->accur));
+		return (ft_strndupl(str, lst->accur));
 	else
 		return (str);
 }

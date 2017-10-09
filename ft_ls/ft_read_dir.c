@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_read_dir.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/01 19:29:58 by amovchan          #+#    #+#             */
+/*   Updated: 2017/10/01 19:30:00 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ls.h"
 
-static t_file	*file_data(struct stat buf, struct dirent *dir, t_arg *arg)
+t_file			*file_data(struct stat buf, t_arg *arg)
 {
 	t_file	*lst;
 
@@ -8,32 +20,20 @@ static t_file	*file_data(struct stat buf, struct dirent *dir, t_arg *arg)
 	lst->next = NULL;
 	lst->previous = NULL;
 	lst->st_nlink = buf.st_nlink;
+	lst->st_uid = buf.st_uid;
+	lst->st_gid = buf.st_gid;
 	lst->pw_name = ft_strdup(getpwuid(buf.st_uid)->pw_name);
 	lst->gr_name = ft_strdup(getgrgid(buf.st_gid)->gr_name);
 	lst->st_size = buf.st_size;
-	lst->st_time = arg->u == 0 ? buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
-	lst->st_nano = arg->u == 0 ? buf.st_mtimespec.tv_nsec : buf.st_atimespec.tv_nsec;
+	lst->st_time = arg->u == 0 ?
+		buf.st_mtimespec.tv_sec : buf.st_atimespec.tv_sec;
+	lst->st_nano = arg->u == 0 ?
+		buf.st_mtimespec.tv_nsec : buf.st_atimespec.tv_nsec;
 	lst->blok = buf.st_blocks;
 	return (lst);
 }
 
-static char	*name_in_dr(char *name, char *file)
-{
-	char	*tab;
-	char	*s;
-
-	if (name[0] == '.' && name[1] == '\0')
-		return (ft_strdup(file));
-	if (name[ft_strlen(name) - 1] != '/')
-		tab = ft_strjoin(name, "/");
-	else
-		tab = ft_strdup(name);
-	s = ft_strjoin(tab, file);
-	ft_strdel(&tab);
-	return (s);
-}
-
-static void	ft_without_sorting(t_file **begin, t_file *file)
+static void		ft_without_sorting(t_file **begin, t_file *file)
 {
 	t_file	*lst;
 
@@ -43,7 +43,7 @@ static void	ft_without_sorting(t_file **begin, t_file *file)
 		file->next = *begin;
 		(*begin)->previous = file;
 		*begin = (*begin)->previous;
-		return;
+		return ;
 	}
 	while (lst->next)
 		lst = lst->next;
@@ -51,7 +51,7 @@ static void	ft_without_sorting(t_file **begin, t_file *file)
 	file->previous = lst;
 }
 
-static void ft_add_file(t_file **begin, t_file *file, t_arg *arg)
+static void		ft_add_file(t_file **begin, t_file *file, t_arg *arg)
 {
 	if (!*begin)
 		*begin = file;
@@ -63,7 +63,21 @@ static void ft_add_file(t_file **begin, t_file *file, t_arg *arg)
 		add_alpha_file(begin, file);
 }
 
-void	read_dir(DIR *ptr, t_arg *arg, char *name, t_file **begin)
+static t_file	*init_file(struct dirent dir, struct stat buf,
+							t_arg *arg, char *src)
+{
+	t_file	*file;
+
+	file = file_data(buf, arg);
+	file->access = ft_access(buf, src, ft_strnew(11));
+	file->name = ft_strdup(dir.d_name);
+	file->path = src;
+	file->d_name = file->access[0] == 'd' ? ft_strdup(file->name) : NULL;
+	file->color = arg->upper_g == 1 ? ft_get_color(file->access) : NULL;
+	return (file);
+}
+
+void			read_dir(DIR *ptr, t_arg *arg, char *name, t_file **begin)
 {
 	t_file			*file;
 	struct dirent	*dir;
@@ -72,16 +86,19 @@ void	read_dir(DIR *ptr, t_arg *arg, char *name, t_file **begin)
 
 	while ((dir = readdir(ptr)) != NULL)
 	{
-		if (arg->a == 0 && dir->d_name[0] == '.')
+		if (arg->a == 0 && dir->d_name[0] == '.' && arg->d == 0)
 			continue ;
 		src = name_in_dr(name, dir->d_name);
 		if (lstat(src, &buf) == 0)
 		{
-			file = file_data(buf, dir, arg);
-			file->access = ft_access(buf, src);
-			file->name = file_name_and_links(src, file->access[0], dir->d_name, arg);
+			file = init_file(*dir, buf, arg, src);
+			if (arg->d == 1 && !ft_strcmp(".", file->name))
+			{
+				ft_dell_file(begin);
+				*begin = file;
+				return ;
+			}
 			ft_add_file(begin, file, arg);
 		}
-		ft_strdel(&src);
 	}
 }

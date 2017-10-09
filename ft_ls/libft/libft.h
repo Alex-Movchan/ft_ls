@@ -6,7 +6,7 @@
 /*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/29 14:47:52 by amovchan          #+#    #+#             */
-/*   Updated: 2017/04/20 17:13:55 by amovchan         ###   ########.fr       */
+/*   Updated: 2017/10/01 20:21:13 by amovchan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,8 +196,7 @@ char				*ft_str_zero2(long double nb, t_srt *lst, char *s);
 char				*ft_okrug_a2(char *str);
 char				*ft_castnegativ(intmax_t nbr, t_srt *lst);
 char				*ft_castb(va_list ap, t_srt *lst);
-int					get_next_line(const int fd, char **line);
 char				*ft_strndup(char *str, size_t len);
-char			*ft_strnjoin(char const *s1, char const *s2, size_t len);
+int					get_next_line(const int fd, char **line);
 
 #endif

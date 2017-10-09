@@ -1,111 +1,102 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print_ls.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/01 19:52:44 by amovchan          #+#    #+#             */
+/*   Updated: 2017/10/01 19:52:54 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "ft_ls.h"
-
-static void		print_not_arg(t_file *file, t_arg *arg)
-{
-	while (file)
-	{
-		if (arg->a == 0 && file->name[0] == '.')
-		{
-			file = file->next;
-			continue ;
-		}
-		if (file->access[0] == 'd')
-			ft_printf("%{green}s{eoc}  ", file->name);
-		else if (file->access[0] == 'l')
-			ft_printf("%{bleu}s{eoc}  ", file->name);
-		else
-		ft_printf("%s  ", file->name);
-		file = file->next;
-	}
-	ft_printf("\n");
-}
-
-
-static void	print_ls2(t_file *file, t_arg *arg, int *max)
-{
-	char	*time;
-
-	if (arg->g)
-	{
-		time = ft_strndup((ctime(&file->st_time) + 4), 12);
-		if (file->access[0] == 'd')
-			ft_printf("%s% *d %s% *d %s %{green}s{eoc}\n", file->access, max[0], file->st_nlink, file->gr_name,
-					  max[1], file->st_size, time, file->name);
-		else
-			ft_printf("%s% *d %s% *d %s %s\n", file->access, max[0], file->st_nlink, file->gr_name,
-					  max[1], file->st_size, time, file->name);
-		ft_strdel(&time);
-	}
-	else
-		ft_printf("%s ", file->name);
-}
 
 static void	print_ls(t_file *file, t_arg *arg, int *max)
 {
 	char	*time;
 
-	if (arg->l)
+	time = ft_strndup((ctime(&file->st_time) + 4), 12);
+	time[12] = '\0';
+	if (arg->upper_g)
+		file->name = name_color(file->name, file->access);
+	if (arg->l == 1)
+		ft_printf("%s% *d %-*s %-*s% *d %s %s\n", file->access,
+		max[0], file->st_nlink, max[2], file->pw_name, max[3],
+		file->gr_name, max[1], file->st_size, time, file->name);
+	else if (arg->g == 1)
+		ft_printf("%s% *d %-*s% *d %s %s\n", file->access,
+			max[0], file->st_nlink, max[3], file->gr_name, max[1],
+			file->st_size, time, file->name);
+	else if (arg->n == 1)
+		ft_printf("%s% *d %-*d %-*d% *d %s %s\n", file->access, max[0],
+			file->st_nlink, max[5], file->st_uid, max[4], file->st_gid,
+			max[1], file->st_size, time, file->name);
+	ft_strdel(&time);
+}
+
+static void	print_one(t_file *file, t_arg *arg)
+{
+	if (arg->r)
 	{
-		time = ft_strndup((ctime(&file->st_time) + 4), 12);
-		time[12] = '\0';
-//		if (file->access[0] == 'd')
-//			ft_printf("%s% *d %-*s %-*s% *d %s %{green}s{eoc}\n", file->access, max[0], file->st_nlink, max[2], file->pw_name, max[3], file->gr_name,
-//					max[1], file->st_size, time, file->name);
-//		else if (file->access[0] == 'l')
-//			ft_printf("%s% *d %-*s %-*s% *d %s %{bleu}s{eoc}\n", file->access, max[0], file->st_nlink, max[2], file->pw_name, max[3], file->gr_name,
-//					  max[1], file->st_size, time, file->name);
-//		else
-			ft_printf("%s% *d %-*s %-*s% *d %s %s\n", file->access, max[0], file->st_nlink, max[2], file->pw_name, max[3], file->gr_name,
-					 max[1], file->st_size, time, file->name);
-		ft_strdel(&time);
+		while (file)
+		{
+			file->color == NULL ? ft_printf("%s\n", file->name) :
+			ft_printf("%s%s%s\n", file->color, file->name, EOC);
+			file = file->previous;
+		}
+		return ;
 	}
-	else if (arg->one)
-		ft_printf("%s\n", file->name);
-	else
-		print_ls2(file, arg, max);
+	while (file)
+	{
+		file->color == NULL ? ft_printf("%s\n", file->name) :
+		ft_printf("%s%s%s\n", file->color, file->name, EOC);
+		file = file->next;
+	}
+}
+
+static void	print_revers(t_file *file, t_arg *arg)
+{
+	int		*max;
+
+	if (arg->g == 0 && arg->l == 0 && arg->one == 0 && arg->n == 0)
+		return (print_colum_rev(file, 0));
+	last_file(&file);
+	if (arg->one == 1)
+		return (print_one(file, arg));
+	if (arg->l || arg->g || arg->n)
+	{
+		ft_printf("total %d\n", ft_total(file, arg));
+		max = largestelem(file, arg);
+		while (file)
+		{
+			print_ls(file, arg, max);
+			file = file->previous;
+		}
+		free(max);
+	}
 }
 
 void		print_file(t_file *file, t_arg *arg)
 {
 	int		*max;
 
-	if (arg->l)
-		ft_printf("total %d\n", ft_total(file, arg));
-	max = largestelem(file);
-	if (arg->upper_c)
-		return (print_colum(file, NULL, 0));
-	else if (arg->g == 0 && arg->l == 0 && arg->upper_c == 0 && arg->f == 0)
-		return (print_not_arg(file, arg));
-	while (file)
+	if (arg->r)
+		return (print_revers(file, arg));
+	if (arg->g == 0 && arg->l == 0 && arg->one == 0 && arg->n == 0)
+		return (print_colum(file, 0));
+	if (arg->one == 1)
+		return (print_one(file, arg));
+	if (arg->l || arg->g || arg->n)
 	{
-		if (arg->a == 0 && file->name[0] == '.')
+		if (arg->n == 0)
+			ft_printf("total %d\n", ft_total(file, arg));
+		max = largestelem(file, arg);
+		while (file)
 		{
+			print_ls(file, arg, max);
 			file = file->next;
-			continue;
 		}
-		print_ls(file, arg, max);
-		file = file->next;
-	}
-	free(max);
-}
-void		print_revers(t_file *file, t_arg *arg)
-{
-	char	*time;
-	int		*max;
-
-	if (arg->l)
-		ft_printf("total %d\n", ft_total(file, arg));
-	max = largestelem(file);
-	last_file(&file);
-	while (file->previous)
-	{
-		if (arg->a == 0 && file->name[0] == '.')
-		{
-			file = file->previous;
-			continue;
-		}
-		print_ls(file, arg, max);
-		file = file->previous;
+		free(max);
 	}
 }

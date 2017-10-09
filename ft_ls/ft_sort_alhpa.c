@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_sort_alhpa.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/01 19:31:56 by amovchan          #+#    #+#             */
+/*   Updated: 2017/10/01 19:32:02 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ls.h"
 
 static void	second_file(t_file **begin, t_file *file)
@@ -20,7 +32,7 @@ static void	ft_find_place(t_file **begin, t_file *file)
 	t_file	*lst;
 
 	lst = *begin;
-	while (lst->next)
+	while (lst && lst->next)
 	{
 		if (ft_strcmp(lst->next->name, file->name) > 0)
 		{

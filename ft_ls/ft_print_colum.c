@@ -1,87 +1,103 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_print_colum.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amovchan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/01 18:32:37 by amovchan          #+#    #+#             */
+/*   Updated: 2017/10/01 18:32:42 by amovchan         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static int	size_colum()
+static t_file	*ft_search_file_rev(t_file *file, int n, int count, int max)
 {
-	struct winsize	size;
-
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-	return ((int)size.ws_col );
-}
-
-static int largest_name_len(t_file *file)
-{
-	int		max;
-	int		len;
 	t_file	*lst;
 
-	max = 0;
 	lst = file;
-	while (lst)
+	n *= (max - count);
+	while (lst && n)
 	{
-		if (max < (len = (int)ft_strlen(lst->name)))
-			max = len;
-		lst = lst->next;
+		lst = lst->previous;
+		n--;
 	}
-	max += 7;
-	return (max);
+	return (lst);
 }
 
-static int count_file(t_file *file)
-{
-	int		i;
-	t_file	*lst;
-
-	lst = file;
-	i = 0;
-	while (lst)
-	{
-		i++;
-		lst = lst->next;
-	}
-	return (i);
-}
-
-static char	*ft_search_file(t_file *file, int n, int count, int max)
+static t_file	*ft_search_file(t_file *file, int n, int count, int max)
 {
 	t_file	*lst;
 
 	lst = file;
-	 n *= (max - count);
+	n *= (max - count);
 	while (lst && n)
 	{
 		lst = lst->next;
 		n--;
 	}
-	if (lst)
-		return (lst->name);
-	else
-		return (NULL);
+	return (lst);
 }
 
-
-void		print_colum(t_file *file, char *name, int i)
+static int		*init_size(t_file *file)
 {
-	int		len;
-	int		size;
-	int		count;
-	int		n;
-	int		colum;
+	int		*size;
 
-	size = size_colum();
-	len = largest_name_len(file);
-	count = count_file(file);
-	n = count % (size / len) > 0 ? 1 : 0;
-	n += count / (size / len);
-	i = n;
+	size = (int*)malloc(sizeof(int) * 5);
+	size[0] = size_colum();
+	size[1] = largest_name_len(file);
+	size[2] = count_file(file);
+	size[3] = size[2] % (size[0] / size[1]) > 0 ? 1 : 0;
+	size[3] += size[2] / (size[0] / size[1]);
+	return (size);
+}
+
+void			print_colum_rev(t_file *file, int i)
+{
+	int		*size;
+	t_file	*lsr;
+
+	size = init_size(file);
+	i = size[3];
+	last_file(&file);
 	while (file && i > 0)
 	{
-		colum = size / len;
-		while (colum > 0)
+		size[4] = size[0] / size[1];
+		while (size[4] > 0)
 		{
-			if ((name = ft_search_file(file, n, colum, (size / len))) != NULL)
-				ft_printf("%-*s", len, name);
-			colum--;
+			if ((lsr = ft_search_file_rev(file,
+					size[3], size[4], (size[0] / size[1]))) != NULL)
+				lsr->color == NULL ? ft_printf("%-*s", size[1], lsr->name) :
+				ft_printf("%s%-*s%s", lsr->color, size[1], lsr->name, EOC);
+			size[4]--;
+		}
+		if (i > 1)
+			ft_printf("\n");
+		file = file->previous;
+		i--;
+	}
+	ft_printf("\n");
+	free(size);
+}
+
+void			print_colum(t_file *file, int i)
+{
+	int		*size;
+	t_file	*lsr;
+
+	size = init_size(file);
+	i = size[3];
+	while (file && i > 0)
+	{
+		size[4] = size[0] / size[1];
+		while (size[4] > 0)
+		{
+			if ((lsr = ft_search_file(file,
+					size[3], size[4], (size[0] / size[1]))) != NULL)
+				lsr->color == NULL ? ft_printf("%-*s", size[1], lsr->name) :
+				ft_printf("%s%-*s%s", lsr->color, size[1], lsr->name, EOC);
+			size[4]--;
 		}
 		if (i > 1)
 			ft_printf("\n");
@@ -89,4 +105,5 @@ void		print_colum(t_file *file, char *name, int i)
 		i--;
 	}
 	ft_printf("\n");
+	free(size);
 }

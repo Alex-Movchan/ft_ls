@@ -6,7 +6,7 @@
 #    By: amovchan <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2016/11/30 14:47:27 by amovchan          #+#    #+#              #
-#    Updated: 2017/04/25 17:04:00 by amovchan         ###   ########.fr        #
+#    Updated: 2017/10/01 20:21:51 by amovchan         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -18,10 +18,9 @@ G = gcc
 
 SRC = 	ft_atoi.c \
 		ft_bzero.c \
-		ft_strndup.c \
-		ft_strnjoin.c \
 		ft_isalnum.c \
 		ft_isalpha.c \
+		ft_strndup.c \
 		ft_isascii.c \
 		ft_isdigit.c \
 		ft_isnegativ.c \
@@ -130,7 +129,7 @@ $(NAME) : $(OBJ)
 		@ranlib $(NAME)
 
 %.o: %.c libft.h
-		@$(G) -c -o $@ $<
+		@$(G) $(FLAG) -c -o $@ $<
 clean:
 		@$(DEL) $(OBJ)
 
